@@ -1,4 +1,0 @@
-services:
-  - type: web
-    name: ashs-pixel-hopper
-    staticPublish: ./
