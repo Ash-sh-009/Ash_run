@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ash's Orbital Conquest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a1a, #1a1a32);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            height: 90vh;
+            background: rgba(10, 15, 30, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 200, 255, 0.2);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 247, 255, 0.1);
+        }
+        
+        .header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+            background: rgba(5, 10, 25, 0.5);
+        }
+        
+        .game-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00f7ff, #ff00aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+        
+        .creator {
+            font-size: 1rem;
+            color: rgba(0, 247, 255, 0.8);
+            margin-bottom: 10px;
+        }
+        
+        .game-content {
+            display: flex;
+            height: calc(100% - 130px);
+        }
+        
+        .game-board {
+            flex: 3;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-ui {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid rgba(0, 247, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            background: rgba(5, 10, 25, 0.3);
+        }
+        
+        .mode-selector {
+            display: flex;
+            margin-bottom: 20px;
+            background: rgba(10, 20, 40, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            color: rgba(0, 247, 255, 0.7);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .mode-btn.active {
+            background: rgba(0, 247, 255, 0.2);
+            color: #fff;
+        }
+        
+        .player-info {
+            background: rgba(5, 15, 35, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 247, 255, 0.1);
+        }
+        
+        .player-info h3 {
+            color: #00f7ff;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .stat {
+            background: rgba(10, 25, 50, 0.4);
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .stat-value {
+            color: #ff00aa;
+            font-weight: 600;
+        }
+        
+        .controls {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px;
+            background: linear-gradient(135deg, #00aaff, #0077ff);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+        }
+        
+        .btn.attack {
+            background: linear-gradient(135deg, #ff0055, #cc0000);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(5, 10, 25, 0.9);
+            padding: 20px 40px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 200, 255, 0.3);
+            z-index: 100;
+            max-width: 80%;
+        }
+        
+        .message h2 {
+            color: #00f7ff;
+            margin-bottom: 15px;
+        }
+        
+        .message p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .leaderboard {
+            margin-top: 20px;
+            background: rgba(5, 15, 35, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 247, 255, 0.1);
+        }
+        
+        .leaderboard h3 {
+            color: #00f7ff;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 247, 255, 0.1);
+        }
+        
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+        
+        .player-name {
+            font-weight: 600;
+        }
+        
+        .player-score {
+            color: #ff00aa;
+        }
+        
+        @media (max-width: 768px) {
+            .game-content {
+                flex-direction: column;
+            }
+            
+            .game-ui {
+                border-left: none;
+                border-top: 1px solid rgba(0, 247, 255, 0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="game-title">Ash's Orbital Conquest</h1>
+            <p class="creator">Created by Ash - You are the Commander</p>
+        </div>
+        
+        <div class="game-content">
+            <div class="game-board" id="gameBoard">
+                <canvas id="gameCanvas"></canvas>
+                <div class="message" id="welcomeMessage">
+                    <h2>Welcome Commander Ash</h2>
+                    <p>Expand your orbital empire by capturing planets and defeating opponents.</p>
+                    <p>Your goal is to control 70% of the galaxy before time runs out.</p>
+                    <button class="btn" id="startGame">Begin Conquest</button>
+                </div>
+            </div>
+            
+            <div class="game-ui">
+                <div class="mode-selector">
+                    <button class="mode-btn active" id="singlePlayerBtn">Single Player</button>
+                    <button class="mode-btn" id="multiPlayerBtn">Multiplayer</button>
+                </div>
+                
+                <div class="player-info">
+                    <h3>Commander Ash</h3>
+                    <div class="stats">
+                        <div class="stat">Planets: <span class="stat-value" id="planetCount">3</span></div>
+                        <div class="stat">Fleet: <span class="stat-value" id="fleetSize">120</span></div>
+                        <div class="stat">Resources: <span class="stat-value" id="resources">850</span></div>
+                        <div class="stat">Time: <span class="stat-value" id="timeLeft">4:30</span></div>
+                    </div>
+                </div>
+                
+                <div class="leaderboard">
+                    <h3>Galactic Leaders</h3>
+                    <div class="leaderboard-item">
+                        <span class="player-name">Ash</span>
+                        <span class="player-score">32%</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="player-name">Nova Corps</span>
+                        <span class="player-score">28%</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="player-name">Cygnus Alliance</span>
+                        <span class="player-score">24%</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="player-name">Andromeda Empire</span>
+                        <span class="player-score">16%</span>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn" id="buildFleet">Build Fleet (50⚡)</button>
+                    <button class="btn" id="upgradePlanet">Upgrade Planet (100⚡)</button>
+                    <button class="btn attack" id="launchAttack">Launch Attack</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        <script>
+        // Game configuration
+        const config = {
+            playerName: "Commander Ash",
+            galaxySize: { width: 1000, height: 600 },
+            planetCount: 15,
+            startingPlanets: 3,
+            startingFleet: 100,
+            maxFleet: 500,
+            timeLimit: 300, // 5 minutes
+            victoryThreshold: 70 // percentage
+        };
+
+        // Game state
+        const gameState = {
+            planets: [],
+            player: {
+                id: "player",
+                name: config.playerName,
+                color: "#00f7ff",
+                planets: [],
+                fleet: config.startingFleet,
+                resources: 500,
+                controlPercentage: 0
+            },
+            aiPlayers: [
+                { id: "ai1", name: "Nova Corps", color: "#ff6600", planets: [], fleet: 90, resources: 450 },
+                { id: "ai2", name: "Cygnus Alliance", color: "#aa66ff", planets: [], fleet: 80, resources: 400 },
+                { id: "ai3", name: "Andromeda Empire", color: "#ff00aa", planets: [], fleet: 70, resources: 350 }
+            ],
+            selectedPlanet: null,
+            targetPlanet: null,
+            gameMode: "singlePlayer",
+            gameStarted: false,
+            gameOver: false,
+            timeLeft: config.timeLimit,
+            lastUpdate: Date.now()
+        };
+
+        // DOM Elements
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const startBtn = document.getElementById('startGame');
+        const planetCountEl = document.getElementById('planetCount');
+        const fleetSizeEl = document.getElementById('fleetSize');
+        const resourcesEl = document.getElementById('resources');
+        const timeLeftEl = document.getElementById('timeLeft');
+        const singlePlayerBtn = document.getElementById('singlePlayerBtn');
+        const multiPlayerBtn = document.getElementById('multiPlayerBtn');
+        const buildFleetBtn = document.getElementById('buildFleet');
+        const upgradePlanetBtn = document.getElementById('upgradePlanet');
+        const launchAttackBtn = document.getElementById('launchAttack');
+
+        // Initialize canvas
+        function initCanvas() {
+            canvas.width = document.querySelector('.game-board').clientWidth;
+            canvas.height = document.querySelector('.game-board').clientHeight;
+        }
+
+        // Initialize game
+        function initGame() {
+            // Create planets
+            for (let i = 0; i < config.planetCount; i++) {
+                const size = 15 + Math.random() * 25;
+                const planet = {
+                    id: `planet${i}`,
+                    x: 50 + Math.random() * (canvas.width - 100),
+                    y: 50 + Math.random() * (canvas.height - 100),
+                    size: size,
+                    production: Math.floor(size / 5),
+                    owner: null,
+                    level: 1,
+                    maxLevel: 5
+                };
+                
+                gameState.planets.push(planet);
+            }
+            
+            // Assign starting planets to player
+            for (let i = 0; i < config.startingPlanets; i++) {
+                const planet = gameState.planets[i];
+                planet.owner = gameState.player.id;
+                gameState.player.planets.push(planet);
+            }
+            
+            // Assign planets to AI players
+            let aiIndex = 0;
+            for (let i = config.startingPlanets; i < config.startingPlanets + 3; i++) {
+                const planet = gameState.planets[i];
+                planet.owner = gameState.aiPlayers[aiIndex].id;
+                gameState.aiPlayers[aiIndex].planets.push(planet);
+                aiIndex++;
+            }
+            
+            // Assign remaining planets as neutral
+            for (let i = config.startingPlanets + 3; i < gameState.planets.length; i++) {
+                gameState.planets[i].owner = "neutral";
+            }
+            
+            // Start game
+            gameState.gameStarted = true;
+            welcomeMessage.style.display = "none";
+            gameLoop();
+        }
+
+        // Draw planet
+        function drawPlanet(planet) {
+            // Draw glow
+            ctx.beginPath();
+            ctx.arc(planet.x, planet.y, planet.size + 5, 0, Math.PI * 2);
+            const glow = ctx.createRadialGradient(
+                planet.x, planet.y, planet.size,
+                planet.x, planet.y, planet.size + 5
+            );
+            glow.addColorStop(0, planet.owner ? 
+                (planet.owner === gameState.player.id ? "rgba(0, 247, 255, 0.5)" : 
+                (planet.owner.startsWith("ai") ? "rgba(255, 0, 170, 0.3)" : "rgba(255, 255, 255, 0.1)")) : "rgba(255, 255, 255, 0.1)");
+            glow.addColorStop(1, "transparent");
+            ctx.fillStyle = glow;
+            ctx.fill();
+            
+            // Draw planet
+            ctx.beginPath();
+            ctx.arc(planet.x, planet.y, planet.size, 0, Math.PI * 2);
+            
+            // Set planet color based on owner
+            if (planet.owner === gameState.player.id) {
+                ctx.fillStyle = "#00f7ff";
+            } else if (planet.owner && planet.owner.startsWith("ai")) {
+                const aiPlayer = gameState.aiPlayers.find(p => p.id === planet.owner);
+                ctx.fillStyle = aiPlayer.color;
+            } else {
+                ctx.fillStyle = "#444466";
+            }
+            
+            ctx.fill();
+            
+            // Draw planet ring
+            ctx.beginPath();
+            ctx.arc(planet.x, planet.y, planet.size, 0, Math.PI * 2);
+            ctx.strokeStyle = planet.owner ? 
+                (planet.owner === gameState.player.id ? "#ffffff" : "#aaaaaa") : "#666688";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw planet level indicator
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 14px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(`★${planet.level}`, planet.x, planet.y);
+        }
+
+        // Draw fleets
+        function drawFleets() {
+            // This would draw traveling fleets in a real implementation
+        }
+
+        // Draw UI elements
+        function drawUI() {
+            // Draw player info
+            if (gameState.selectedPlanet) {
+                const planet = gameState.selectedPlanet;
+                
+                // Draw selection circle
+                ctx.beginPath();
+                ctx.arc(planet.x, planet.y, planet.size + 10, 0, Math.PI * 2);
+                ctx.strokeStyle = "#ffffff";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Draw info panel
+                ctx.fillStyle = "rgba(10, 15, 30, 0.9)";
+                ctx.fillRect(planet.x - 60, planet.y - planet.size - 60, 120, 50);
+                
+                ctx.strokeStyle = "#00f7ff";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(planet.x - 60, planet.y - planet.size - 60, 120, 50);
+                
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 12px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(`Planet ${planet.id}`, planet.x, planet.y - planet.size - 45);
+                
+                ctx.font = "11px Arial";
+                ctx.fillText(`Production: ${planet.production}/sec`, planet.x, planet.y - planet.size - 30);
+                ctx.fillText(`Level: ${planet.level}`, planet.x, planet.y - planet.size - 15);
+            }
+        }
+
+        // Update game state
+        function updateGameState() {
+            const now = Date.now();
+            const deltaTime = (now - gameState.lastUpdate) / 1000;
+            gameState.lastUpdate = now;
+            
+            if (!gameState.gameStarted || gameState.gameOver) return;
+            
+            // Update game time
+            gameState.timeLeft -= deltaTime;
+            if (gameState.timeLeft <= 0) {
+                endGame(false);
+                return;
+            }
+            
+            // Update player resources
+            gameState.player.planets.forEach(planet => {
+                gameState.player.resources += planet.production * deltaTime;
+            });
+            
+            // Update AI resources and behavior
+            gameState.aiPlayers.forEach(ai => {
+                ai.planets.forEach(planet => {
+                    ai.resources += planet.production * deltaTime;
+                });
+                
+                // Simple AI decision making
+                if (Math.random() < 0.02) {
+                    aiDecision(ai);
+                }
+            });
+            
+            // Update UI
+            updateUI();
+        }
+
+        // AI decision making
+        function aiDecision(ai) {
+            if (ai.resources >= 50 && Math.random() < 0.7) {
+                // Build fleet
+                ai.fleet += Math.floor(ai.resources * 0.2);
+                ai.resources -= 50;
+            } else if (ai.resources >= 100 && Math.random() < 0.5) {
+                // Upgrade planet
+                const planet = ai.planets[Math.floor(Math.random() * ai.planets.length)];
+                if (planet.level < planet.maxLevel) {
+                    planet.level++;
+                    planet.production = Math.floor(planet.size / 5) * planet.level;
+                    ai.resources -= 100;
+                }
+            } else if (ai.fleet > 50) {
+                // Attack
+                const target = findAITarget(ai);
+                if (target) {
+                    // In a real game, this would launch an attack fleet
+                    if (Math.random() < 0.6) {
+                        // Success
+                        target.owner = ai.id;
+                        ai.planets.push(target);
+                        if (target.owner === gameState.player.id) {
+                            const index = gameState.player.planets.indexOf(target);
+                            if (index !== -1) gameState.player.planets.splice(index, 1);
+                        }
+                        ai.fleet -= 40;
+                    } else {
+                        // Failure
+                        ai.fleet -= 50;
+                    }
+                }
+            }
+            
+            // Calculate control percentage
+            calculateControlPercentage();
+        }
+
+        // Find AI target
+        function findAITarget(ai) {
+            const playerPlanets = gameState.planets.filter(p => p.owner === gameState.player.id);
+            const neutralPlanets = gameState.planets.filter(p => p.owner === "neutral");
+            
+            // Prefer attacking player planets
+            if (playerPlanets.length > 0 && Math.random() < 0.7) {
+                return playerPlanets[Math.floor(Math.random() * playerPlanets.length)];
+            } else if (neutralPlanets.length > 0) {
+                return neutralPlanets[Math.floor(Math.random() * neutralPlanets.length)];
+            }
+            
+            return null;
+        }
+
+        // Calculate control percentage
+        function calculateControlPercentage() {
+            const totalPlanets = gameState.planets.length;
+            const playerPlanets = gameState.player.planets.length;
+            gameState.player.controlPercentage = Math.round((playerPlanets / totalPlanets) * 100);
+            
+            // Check for victory
+            if (gameState.player.controlPercentage >= config.victoryThreshold) {
+                endGame(true);
+            }
+        }
+
+        // Update UI
+        function updateUI() {
+            planetCountEl.textContent = gameState.player.planets.length;
+            fleetSizeEl.textContent = gameState.player.fleet;
+            resourcesEl.textContent = Math.floor(gameState.player.resources);
+            
+            // Format time
+            const minutes = Math.floor(gameState.timeLeft / 60);
+            const seconds = Math.floor(gameState.timeLeft % 60);
+            timeLeftEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        // End game
+        function endGame(victory) {
+            gameState.gameOver = true;
+            
+            const message = document.createElement('div');
+            message.className = 'message';
+            message.innerHTML = `
+                <h2>${victory ? 'Galactic Victory!' : 'Time Expired'}</h2>
+                <p>${victory ? 'You have conquered the galaxy!' : 'You failed to conquer the galaxy in time.'}</p>
+                <p>You controlled ${gameState.player.controlPercentage}% of planets.</p>
+                <button class="btn" id="restartGame">Play Again</button>
+            `;
+            
+            document.querySelector('.game-board').appendChild(message);
+            
+            document.getElementById('restartGame').addEventListener('click', () => {
+                location.reload();
+            });
+        }
+
+        // Planet selection
+        function handlePlanetSelection(x, y) {
+            gameState.selectedPlanet = null;
+            
+            for (const planet of gameState.planets) {
+                const dx = planet.x - x;
+                const dy = planet.y - y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance <= planet.size) {
+                    gameState.selectedPlanet = planet;
+                    break;
+                }
+            }
+        }
+
+        // Game loop
+        function gameLoop() {
+            updateGameState();
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw stars background
+            drawStars();
+            
+            // Draw planets
+            gameState.planets.forEach(drawPlanet);
+            
+            // Draw fleets
+            drawFleets();
+            
+            // Draw UI
+            drawUI();
+            
+            if (!gameState.gameOver) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Draw stars background
+        function drawStars() {
+            ctx.fillStyle = "#ffffff";
+            
+            for (let i = 0; i < 200; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = Math.random() * 1.5;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Draw nebula effects
+            const nebula = ctx.createRadialGradient(
+                canvas.width * 0.3, canvas.height * 0.7, 0,
+                canvas.width * 0.3, canvas.height * 0.7, 300
+            );
+            nebula.addColorStop(0, "rgba(100, 50, 150, 0.3)");
+            nebula.addColorStop(1, "transparent");
+            
+            ctx.beginPath();
+            ctx.arc(canvas.width * 0.3, canvas.height * 0.7, 300, 0, Math.PI * 2);
+            ctx.fillStyle = nebula;
+            ctx.fill();
+            
+            const nebula2 = ctx.createRadialGradient(
+                canvas.width * 0.7, canvas.height * 0.3, 0,
+                canvas.width * 0.7, canvas.height * 0.3, 200
+            );
+            nebula2.addColorStop(0, "rgba(150, 50, 100, 0.2)");
+            nebula2.addColorStop(1, "transparent");
+            
+            ctx.beginPath();
+            ctx.arc(canvas.width * 0.7, canvas.height * 0.3, 200, 0, Math.PI * 2);
+            ctx.fillStyle = nebula2;
+            ctx.fill();
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', initGame);
+        
+        singlePlayerBtn.addEventListener('click', () => {
+            gameState.gameMode = "singlePlayer";
+            singlePlayerBtn.classList.add('active');
+            multiPlayerBtn.classList.remove('active');
+        });
+        
+        multiPlayerBtn.addEventListener('click', () => {
+            gameState.gameMode = "multiPlayer";
+            multiPlayerBtn.classList.add('active');
+            singlePlayerBtn.classList.remove('active');
+        });
+        
+        buildFleetBtn.addEventListener('click', () => {
+            if (gameState.player.resources >= 50) {
+                gameState.player.fleet += Math.floor(gameState.player.resources * 0.2);
+                gameState.player.resources -= 50;
+                updateUI();
+            }
+        });
+        
+        upgradePlanetBtn.addEventListener('click', () => {
+            if (gameState.selectedPlanet && 
+                gameState.selectedPlanet.owner === gameState.player.id &&
+                gameState.player.resources >= 100 &&
+                gameState.selectedPlanet.level < gameState.selectedPlanet.maxLevel) {
+                
+                gameState.selectedPlanet.level++;
+                gameState.selectedPlanet.production = Math.floor(gameState.selectedPlanet.size / 5) * gameState.selectedPlanet.level;
+                gameState.player.resources -= 100;
+                updateUI();
+            }
+        });
+        
+        launchAttackBtn.addEventListener('click', () => {
+            if (gameState.selectedPlanet && 
+                gameState.selectedPlanet.owner === gameState.player.id &&
+                gameState.player.fleet > 50) {
+                
+                // Find a target (simplified)
+                const target = gameState.planets.find(p => 
+                    p.owner !== gameState.player.id && 
+                    p.owner !== "neutral" && 
+                    Math.random() > 0.5
+                );
+                
+                if (target) {
+                    // Attack logic
+                    if (Math.random() < 0.7) {
+                        // Success
+                        target.owner = gameState.player.id;
+                        gameState.player.planets.push(target);
+                        
+                        // Remove from previous owner
+                        if (target.owner.startsWith("ai")) {
+                            const ai = gameState.aiPlayers.find(a => a.id === target.owner);
+                            if (ai) {
+                                const index = ai.planets.indexOf(target);
+                                if (index !== -1) ai.planets.splice(index, 1);
+                            }
+                        }
+                        
+                        gameState.player.fleet -= 40;
+                    } else {
+                        // Failure
+                        gameState.player.fleet -= 50;
+                    }
+                    
+                    calculateControlPercentage();
+                    updateUI();
+                }
+            }
+        });
+        
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            handlePlanetSelection(x, y);
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            initCanvas();
+            window.addEventListener('resize', initCanvas);
+        });
+    </script>
+</body>
+</html>
