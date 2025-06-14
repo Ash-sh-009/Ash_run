@@ -1,2 +1,0 @@
-# Ash_run
-Game
