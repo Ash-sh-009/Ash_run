@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AshGlide</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <div id="ui">
+    <h1>AshGlide</h1>
+    <div id="menu">
+      <input type="text" id="username" placeholder="Enter your name" />
+      <button onclick="startGame()">Start</button>
+    </div>
+    <div id="gameover" class="hidden">
+      <p id="finalScore"></p>
+      <button onclick="restartGame()">Play Again</button>
+    </div>
+    <div id="leaderboard" class="hidden">
+      <h2>Leaderboard</h2>
+      <ul id="scores"></ul>
+    </div>
+  </div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
