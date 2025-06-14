@@ -1,3 +1,4 @@
+// Import the necessary Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { 
     getDatabase, 
@@ -9,15 +10,15 @@ import {
     orderByChild 
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
-// Firebase configuration (replace with your own)
+// Your Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyD_1lWebB-jVK7fH7eDF3orLWsr40xzB_0w",
+    apiKey: "AIzaSyD_iWeoB-jVK7fH7eDF3orLWsr4OxzB_Ow",
     authDomain: "ashglide.firebaseapp.com",
     databaseURL: "https://ashglide-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "ashglide",
-    storageBucket: "ashglide.appspot.com",
+    storageBucket: "ashglide.firebasestorage.app",
     messagingSenderId: "556761430344",
-    appId: "1:556761430344:web:9661c2658f9c26f6b25b7d",
+    appId: "1:556761430344:web:9661c2658f9c26f0b25b7d",
     measurementId: "G-BH3G6VREH1"
 };
 
@@ -74,9 +75,16 @@ function updateLeaderboardUI(scores) {
     scores.forEach((score, index) => {
         const li = document.createElement('li');
         
+        // Add trophy emoji for top 3
+        let rankPrefix = '';
+        if (index === 0) rankPrefix = '🥇 ';
+        else if (index === 1) rankPrefix = '🥈 ';
+        else if (index === 2) rankPrefix = '🥉 ';
+        else rankPrefix = `${index + 1}. `;
+        
         // Format username
         const usernameSpan = document.createElement('span');
-        usernameSpan.textContent = `${index + 1}. ${score.username}`;
+        usernameSpan.textContent = `${rankPrefix}${score.username}`;
         usernameSpan.className = 'username';
         
         // Format score
