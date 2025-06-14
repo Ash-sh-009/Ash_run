@@ -1,25 +1,28 @@
-# AshGlide
+# AshGlide - Infinite Glider Game
 
-AshGlide is a neon-themed infinite glider web game using HTML5 Canvas and Firebase.
+![Game Screenshot](screenshot.jpg)
 
-## 🔧 Setup
+A hyper-addictive infinite gliding game with neon synthwave aesthetics and global leaderboard.
 
-1. Create Firebase project and enable Realtime Database.
-2. Paste your Firebase config into `firebase.js`.
-3. Adjust Firebase Rules:
-```json
-{
-  "rules": {
-    ".read": true,
-    ".write": "newData.child('score').val() <= 999999"
-  }
-}
-```
+## Features
 
-## 🚀 Deploy to Vercel
+- Smooth physics-based gameplay
+- Neon synthwave visual style with glow effects
+- Global leaderboard powered by Firebase
+- Multiple color themes (Neon, Ocean, Midnight, Light)
+- Zen mode for relaxed gameplay
+- Responsive design for all devices
 
-1. Push all files to GitHub.
-2. Go to [vercel.com](https://vercel.com), import your repo.
-3. Deploy as a static site.
+## Setup Instructions
 
-Enjoy!
+### Firebase Configuration
+
+1. Create a Firebase project at [firebase.google.com](https://firebase.google.com/)
+2. Enable Realtime Database with the following security rules:
+   ```json
+   {
+     "rules": {
+       ".read": true,
+       ".write": "newData.child('score').val() <= 999999"
+     }
+   }
