@@ -1,28 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="neon">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AshGlide</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AshGlide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Manrope:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <canvas id="gameCanvas"></canvas>
-  <div id="ui">
-    <h1>AshGlide</h1>
-    <div id="menu">
-      <input type="text" id="username" placeholder="Enter your name" />
-      <button onclick="startGame()">Start</button>
+    <div class="container">
+        <div class="theme-switcher">
+            <button data-theme="neon" class="active">NEON</button>
+            <button data-theme="ocean">OCEAN</button>
+            <button data-theme="midnight">MIDNIGHT</button>
+            <button data-theme="light">LIGHT</button>
+        </div>
+        
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+            
+            <div class="screen start-screen active">
+                <h1>ASH<span>GLIDE</span></h1>
+                <p>Tap/Click/Space to float upward</p>
+                <p>Avoid the gates!</p>
+                <button id="startBtn">START GLIDE</button>
+                <div class="quote">"Float like a feather"</div>
+            </div>
+            
+            <div class="screen game-over-screen">
+                <h2>GAME OVER</h2>
+                <p>Your Score: <span id="finalScore">0</span></p>
+                <input type="text" id="username" placeholder="Enter your name" maxlength="20">
+                <button id="submitScore">SUBMIT SCORE</button>
+                <button id="restartBtn">PLAY AGAIN</button>
+            </div>
+            
+            <div class="ui">
+                <div class="score">SCORE: <span id="currentScore">0</span></div>
+                <button id="muteBtn">🔊 SOUND ON</button>
+                <button id="zenMode">ZEN MODE: OFF</button>
+            </div>
+        </div>
+        
+        <div class="leaderboard">
+            <h2>GLOBAL LEADERBOARD</h2>
+            <ol id="leaderboardList">
+                <li>Loading scores...</li>
+            </ol>
+        </div>
     </div>
-    <div id="gameover" class="hidden">
-      <p id="finalScore"></p>
-      <button onclick="restartGame()">Play Again</button>
-    </div>
-    <div id="leaderboard" class="hidden">
-      <h2>Leaderboard</h2>
-      <ul id="scores"></ul>
-    </div>
-  </div>
-  <script type="module" src="main.js"></script>
+
+    <script type="module" src="firebase.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
