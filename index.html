@@ -3,684 +3,590 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ash's Villainous Conquest</title>
+    <title>Ash's Gravity Dodge</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            touch-action: manipulation;
         }
+        
         body {
-            background: linear-gradient(135deg, #1a0a0a, #321a1a);
-            color: #ffe0e0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
-        }
-        .game-container {
-            width: 100%;
-            max-width: 1000px;
-            height: 90vh;
-            background: rgba(30, 10, 10, 0.8);
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
             overflow: hidden;
-            border: 1px solid rgba(255, 50, 50, 0.3);
-            display: flex;
-            flex-direction: column;
+            color: white;
         }
-        .header {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 50, 50, 0.3);
-            background: rgba(25, 5, 5, 0.6);
+        
+        .game-container {
             position: relative;
+            width: 800px;
+            height: 600px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
+        
+        .game-header {
+            text-align: center;
+            padding: 20px 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
         .game-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #ff0055, #ff5500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00;
+            margin-bottom: 5px;
+        }
+        
+        .player-name {
+            font-size: 1.8rem;
+            color: #4db8ff;
             letter-spacing: 2px;
         }
-        .creator {
-            font-size: 1rem;
-            color: rgba(255, 100, 100, 0.9);
-            margin-top: 5px;
-            font-style: italic;
-        }
-        .villain-badge {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: linear-gradient(135deg, #ff0000, #aa0000);
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-        }
-        .game-content {
+        
+        .stats-container {
             display: flex;
-            flex: 1;
-            overflow: hidden;
-            flex-direction: column;
-        }
-        .game-board {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-        .game-ui {
+            justify-content: space-around;
             padding: 15px;
-            border-top: 1px solid rgba(255, 50, 50, 0.3);
-            display: flex;
-            flex-direction: column;
-            background: rgba(20, 5, 5, 0.5);
+            background: rgba(0, 0, 0, 0.3);
         }
-        .mode-selector {
-            display: flex;
-            margin-bottom: 15px;
-            background: rgba(40, 10, 10, 0.6);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .mode-btn {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            background: transparent;
-            color: rgba(255, 100, 100, 0.9);
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .mode-btn.active {
-            background: rgba(255, 50, 50, 0.3);
-            color: #fff;
-        }
-        .player-info {
-            background: rgba(35, 10, 10, 0.7);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 50, 50, 0.2);
-        }
-        .player-info h3 {
-            color: #ff5555;
-            margin-bottom: 10px;
-            text-align: center;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
+        
         .stat {
-            background: rgba(50, 15, 15, 0.5);
-            padding: 8px;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            text-align: center;
         }
+        
         .stat-value {
-            color: #ffaa00;
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-top: 3px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffcc00;
         }
-        .controls {
-            margin-top: 10px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        
+        .game-screen {
+            position: relative;
+            height: 400px;
+            margin: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
         }
-        .btn {
-            padding: 12px;
-            background: linear-gradient(135deg, #ff5500, #cc0000);
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(255, 85, 0, 0.4);
-            font-size: 0.95rem;
-        }
-        .btn.attack {
-            grid-column: span 2;
-            background: linear-gradient(135deg, #ff0055, #990000);
-            box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
-        }
-        canvas {
+        
+        #game-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
         }
-        .message {
+        
+        .player {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(15, 5, 5, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid rgba(255, 50, 50, 0.4);
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.5);
-            z-index: 100;
-            width: 90%;
-            max-width: 400px;
-        }
-        .message h2 {
-            color: #ff5555;
-            margin-bottom: 15px;
-            font-size: 1.8rem;
-        }
-        .message p {
-            margin-bottom: 15px;
-            line-height: 1.5;
-            color: #ffaaaa;
-            font-size: 1rem;
-        }
-        .leaderboard {
-            flex: 1;
-            background: rgba(35, 10, 10, 0.7);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 50, 50, 0.2);
-            margin-bottom: 15px;
-            overflow-y: auto;
-            max-height: 150px;
-        }
-        .leaderboard h3 {
-            color: #ff5555;
-            margin-bottom: 10px;
-            text-align: center;
-            font-size: 1.2rem;
-            position: sticky;
-            top: 0;
-            background: rgba(35, 10, 10, 0.9);
-            padding: 5px;
-            z-index: 1;
-        }
-        .leaderboard-item {
+            width: 40px;
+            height: 40px;
+            background: #ffcc00;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #ffcc00;
+            z-index: 10;
             display: flex;
-            justify-content: space-between;
-            padding: 8px 5px;
-            border-bottom: 1px solid rgba(255, 100, 100, 0.2);
-            background: rgba(40, 15, 15, 0.5);
-            margin-bottom: 5px;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #1a2a6c;
+        }
+        
+        .obstacle {
+            position: absolute;
+            background: #ff3333;
             border-radius: 5px;
-            font-size: 0.9rem;
+            box-shadow: 0 0 10px #ff3333;
         }
-        .leaderboard-item.villain {
-            background: rgba(80, 0, 0, 0.6);
-            border: 1px solid rgba(255, 0, 0, 0.4);
-        }
-        .player-name {
-            font-weight: 600;
-            color: #ff9999;
-        }
-        .player-score {
-            color: #ffaa00;
-            font-weight: 700;
-        }
-        .name-input {
-            padding: 10px;
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            margin: 10px 0;
-            background: rgba(20, 5, 5, 0.7);
-            border: 1px solid rgba(255, 100, 100, 0.4);
-            border-radius: 5px;
-            color: #ffcccc;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            padding: 20px;
             text-align: center;
-            font-size: 1rem;
         }
-        /* Scrollbar styling */
-        .leaderboard::-webkit-scrollbar {
-            width: 5px;
+        
+        .screen h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px #ffcc00;
         }
-        .leaderboard::-webkit-scrollbar-track {
-            background: rgba(20, 5, 5, 0.3);
+        
+        .screen p {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            max-width: 80%;
+            line-height: 1.6;
         }
-        .leaderboard::-webkit-scrollbar-thumb {
-            background: rgba(255, 50, 50, 0.6);
-            border-radius: 2px;
+        
+        .btn {
+            background: linear-gradient(to right, #4db8ff, #1a75ff);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to right, #1a75ff, #4db8ff);
+        }
+        
+        .instructions {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .highlight {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffcc00;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 850px) {
+            .game-container {
+                width: 95%;
+                height: 95vh;
+            }
+            
+            .game-title {
+                font-size: 2.2rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <div class="header">
-            <h1 class="game-title">Ash's Villainous Conquest</h1>
-            <p class="creator">Created by Ash - You are the Villain</p>
-            <div class="villain-badge">THE DARK LORD</div>
+        <div class="game-header">
+            <h1 class="game-title">Gravity Dodge</h1>
+            <div class="player-name">Created by Ash</div>
         </div>
         
-        <div class="game-content">
-            <div class="game-board" id="gameBoard">
-                <canvas id="gameCanvas"></canvas>
-                <div class="message" id="welcomeMessage">
-                    <h2>Welcome, Dark Lord Ash</h2>
-                    <p>Expand your evil empire by conquering planets</p>
-                    <p>Dominate 70% of the galaxy before time runs out!</p>
-                    <button class="btn" id="startGame">Begin Domination</button>
-                </div>
+        <div class="stats-container">
+            <div class="stat">
+                <div>SCORE</div>
+                <div id="score" class="stat-value">0</div>
             </div>
-            
-            <div class="game-ui">
-                <div class="mode-selector">
-                    <button class="mode-btn active" id="singlePlayerBtn">Single Player</button>
-                    <button class="mode-btn" id="multiPlayerBtn">Multiplayer</button>
-                </div>
-                
-                <div class="player-info">
-                    <h3>Dark Lord Ash</h3>
-                    <div class="stats">
-                        <div class="stat">Planets: <span class="stat-value" id="planetCount">0</span></div>
-                        <div class="stat">Fleet: <span class="stat-value" id="fleetSize">650</span></div>
-                        <div class="stat">Resources: <span class="stat-value" id="resources">0</span></div>
-                        <div class="stat">Time: <span class="stat-value" id="timeLeft">5:00</span></div>
-                    </div>
-                </div>
-                
-                <div class="leaderboard">
-                    <h3>Galactic Tyrants</h3>
-                    <div class="leaderboard-item villain">
-                        <span class="player-name">Ash</span>
-                        <span class="player-score">32%</span>
-                    </div>
-                    <div class="leaderboard-item">
-                        <span class="player-name">Nova Corps</span>
-                        <span class="player-score">28%</span>
-                    </div>
-                    <div class="leaderboard-item">
-                        <span class="player-name">Cygnus Alliance</span>
-                        <span class="player-score">24%</span>
-                    </div>
-                    <div class="leaderboard-item">
-                        <span class="player-name">Andromeda Empire</span>
-                        <span class="player-score">16%</span>
-                    </div>
-                </div>
-                
-                <div class="controls">
-                    <button class="btn" id="buildFleet">Build Fleet (50⚡)</button>
-                    <button class="btn" id="upgradePlanet">Upgrade Planet (100⚡)</button>
-                    <button class="btn attack" id="launchAttack">Launch Attack</button>
-                </div>
+            <div class="stat">
+                <div>HIGH SCORE</div>
+                <div id="high-score" class="stat-value">0</div>
+            </div>
+            <div class="stat">
+                <div>LEVEL</div>
+                <div id="level" class="stat-value">1</div>
             </div>
         </div>
+        
+        <div class="game-screen">
+            <div id="start-screen" class="screen">
+                <h2>ASH'S GRAVITY DODGE</h2>
+                <p>Control your character by flipping gravity with the <span class="highlight">SPACEBAR</span> key!</p>
+                <p>Avoid the red obstacles as they fall from above and rise from below.</p>
+                <p>Each level gets faster and more challenging. How long can you survive?</p>
+                <button id="start-btn" class="btn">START GAME</button>
+                <p>Tip: Time your gravity flips carefully to navigate through gaps!</p>
+            </div>
+            
+            <div id="game-over-screen" class="screen hidden">
+                <h2>GAME OVER</h2>
+                <p>Your final score: <span id="final-score" class="highlight">0</span></p>
+                <p>High score: <span id="final-high-score" class="highlight">0</span></p>
+                <button id="restart-btn" class="btn">PLAY AGAIN</button>
+                <p>Can you beat your high score? Just one more try!</p>
+            </div>
+            
+            <canvas id="game-canvas" width="760" height="400"></canvas>
+        </div>
+        
+        <div class="instructions">
+            <p>Press <span class="highlight">SPACEBAR</span> to flip gravity and dodge obstacles!</p>
+        </div>
     </div>
-        <script>
-        // Game configuration
-        const config = {
-            playerName: "Dark Lord Ash",
-            planetCount: 12,
-            startingPlanets: 3,
-            startingFleet: 650,
-            timeLimit: 300,
-            victoryThreshold: 70
-        };
 
-        // Game state
-        const gameState = {
-            planets: [],
-            player: {
-                id: "player",
-                name: config.playerName,
-                color: "#ff5555",
-                planets: [],
-                fleet: config.startingFleet,
-                resources: 0,
-                controlPercentage: 0
-            },
-            aiPlayers: [
-                { id: "ai1", name: "Nova Corps", color: "#ffaa00", planets: [], fleet: 580, resources: 450 },
-                { id: "ai2", name: "Cygnus Alliance", color: "#55aaff", planets: [], fleet: 520, resources: 400 }
-            ],
-            selectedPlanet: null,
-            gameStarted: false,
-            gameOver: false,
-            timeLeft: config.timeLimit,
-            lastUpdate: Date.now(),
-            leaderboard: []
-        };
-
-        // Initialize leaderboard
-        function initLeaderboard() {
-            const saved = localStorage.getItem('villainLeaderboard');
-            if (saved) {
-                gameState.leaderboard = JSON.parse(saved);
-                updateLeaderboardUI();
-            } else {
-                gameState.leaderboard = [
-                    { name: "Ash", score: 32, isVillain: true },
-                    { name: "Nova Corps", score: 28 },
-                    { name: "Cygnus Alliance", score: 24 },
-                    { name: "Andromeda", score: 16 }
-                ];
-                updateLeaderboardUI();
-            }
-        }
-
-        // Save to leaderboard
-        function saveToLeaderboard(name, score) {
-            const entry = {
-                name: name || "Unknown Villain",
-                score: score,
-                isVillain: name === "Ash"
-            };
-            gameState.leaderboard.push(entry);
-            gameState.leaderboard.sort((a, b) => b.score - a.score);
-            gameState.leaderboard = gameState.leaderboard.slice(0, 5);
-            localStorage.setItem('villainLeaderboard', JSON.stringify(gameState.leaderboard));
-            updateLeaderboardUI();
-        }
-
-        // Update leaderboard UI
-        function updateLeaderboardUI() {
-            const leaderboardEl = document.querySelector('.leaderboard');
-            leaderboardEl.innerHTML = '<h3>Galactic Tyrants</h3>';
-            gameState.leaderboard.forEach(entry => {
-                const item = document.createElement('div');
-                item.className = `leaderboard-item ${entry.isVillain ? 'villain' : ''}`;
-                item.innerHTML = `<span class="player-name">${entry.name}</span><span class="player-score">${entry.score}%</span>`;
-                leaderboardEl.appendChild(item);
-            });
-        }
-
-        // DOM Elements
-        const canvas = document.getElementById('gameCanvas');
+    <script>
+        // Game elements
+        const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
-        const welcomeMessage = document.getElementById('welcomeMessage');
-        const startBtn = document.getElementById('startGame');
-        const planetCountEl = document.getElementById('planetCount');
-        const fleetSizeEl = document.getElementById('fleetSize');
-        const resourcesEl = document.getElementById('resources');
-        const timeLeftEl = document.getElementById('timeLeft');
-        const singlePlayerBtn = document.getElementById('singlePlayerBtn');
-        const multiPlayerBtn = document.getElementById('multiPlayerBtn');
-        const buildFleetBtn = document.getElementById('buildFleet');
-        const upgradePlanetBtn = document.getElementById('upgradePlanet');
-        const launchAttackBtn = document.getElementById('launchAttack');
-
-        // Initialize canvas
-        function initCanvas() {
-            canvas.width = document.querySelector('.game-board').clientWidth;
-            canvas.height = document.querySelector('.game-board').clientHeight;
-        }
-
-        // Initialize game
+        const startScreen = document.getElementById('start-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const scoreDisplay = document.getElementById('score');
+        const highScoreDisplay = document.getElementById('high-score');
+        const levelDisplay = document.getElementById('level');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const finalHighScoreDisplay = document.getElementById('final-high-score');
+        
+        // Game variables
+        let gameRunning = false;
+        let score = 0;
+        let highScore = localStorage.getItem('ashGravityDodgeHighScore') || 0;
+        let level = 1;
+        let gravity = 1; // 1 = down, -1 = up
+        let playerY = canvas.height / 2;
+        let playerVelocity = 0;
+        let obstacles = [];
+        let obstacleSpeed = 3;
+        let obstacleSpawnRate = 100; // frames
+        let frameCount = 0;
+        let animationId;
+        
+        // Set high score display
+        highScoreDisplay.textContent = highScore;
+        
+        // Player dimensions
+        const playerWidth = 40;
+        const playerHeight = 40;
+        const playerX = canvas.width / 4;
+        
+        // Game initialization
         function initGame() {
-            // Create planets
-            for (let i = 0; i < config.planetCount; i++) {
-                const size = 20 + Math.random() * 20;
-                gameState.planets.push({
-                    id: `planet${i}`,
-                    x: 50 + Math.random() * (canvas.width - 100),
-                    y: 50 + Math.random() * (canvas.height - 100),
-                    size: size,
-                    production: Math.floor(size / 4),
-                    owner: null,
-                    level: 1,
-                    maxLevel: 5
-                });
+            score = 0;
+            level = 1;
+            playerY = canvas.height / 2;
+            gravity = 1;
+            playerVelocity = 0;
+            obstacles = [];
+            obstacleSpeed = 3;
+            obstacleSpawnRate = 100;
+            frameCount = 0;
+            
+            scoreDisplay.textContent = score;
+            levelDisplay.textContent = level;
+            
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            gameRunning = true;
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
             }
             
-            // Assign starting planets
-            for (let i = 0; i < config.startingPlanets; i++) {
-                gameState.planets[i].owner = gameState.player.id;
-                gameState.player.planets.push(gameState.planets[i]);
-            }
-            
-            // Assign to AI
-            let aiIndex = 0;
-            for (let i = config.startingPlanets; i < config.startingPlanets + 2; i++) {
-                gameState.planets[i].owner = gameState.aiPlayers[aiIndex].id;
-                gameState.aiPlayers[aiIndex].planets.push(gameState.planets[i]);
-                aiIndex++;
-            }
-            
-            // Neutral planets
-            for (let i = config.startingPlanets + 2; i < gameState.planets.length; i++) {
-                gameState.planets[i].owner = "neutral";
-            }
-            
-            // Start game
-            gameState.gameStarted = true;
-            welcomeMessage.style.display = "none";
             gameLoop();
         }
-
-        // Draw planet
-        function drawPlanet(planet) {
-            // Draw glow
-            ctx.beginPath();
-            ctx.arc(planet.x, planet.y, planet.size + 5, 0, Math.PI * 2);
-            const glow = ctx.createRadialGradient(
-                planet.x, planet.y, planet.size,
-                planet.x, planet.y, planet.size + 5
-            );
-            glow.addColorStop(0, planet.owner === gameState.player.id ? 
-                "rgba(255, 50, 50, 0.7)" : 
-                (planet.owner && planet.owner.startsWith("ai") ? 
-                "rgba(255, 150, 0, 0.5)" : "rgba(150, 150, 150, 0.2)"));
-            glow.addColorStop(1, "transparent");
-            ctx.fillStyle = glow;
-            ctx.fill();
+        
+        // Player class
+        class Player {
+            constructor() {
+                this.width = playerWidth;
+                this.height = playerHeight;
+                this.x = playerX;
+                this.y = playerY;
+            }
             
-            // Draw planet
-            ctx.beginPath();
-            ctx.arc(planet.x, planet.y, planet.size, 0, Math.PI * 2);
-            ctx.fillStyle = planet.owner === gameState.player.id ? "#ff5555" : 
-                (planet.owner && planet.owner.startsWith("ai") ? 
-                gameState.aiPlayers.find(p => p.id === planet.owner).color : "#555577");
-            ctx.fill();
-            
-            // Draw planet ring
-            ctx.beginPath();
-            ctx.arc(planet.x, planet.y, planet.size, 0, Math.PI * 2);
-            ctx.strokeStyle = planet.owner === gameState.player.id ? "#ffdd00" : "#aaaaaa";
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            // Draw level
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 14px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText(`★${planet.level}`, planet.x, planet.y);
-        }
-
-        // Draw UI elements
-        function drawUI() {
-            if (gameState.selectedPlanet) {
-                const p = gameState.selectedPlanet;
-                // Selection circle
+            draw() {
+                ctx.fillStyle = '#ffcc00';
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size + 10, 0, Math.PI * 2);
-                ctx.strokeStyle = "#ffdd00";
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-        }
-
-        // Update game state
-        function updateGameState() {
-            const now = Date.now();
-            const deltaTime = (now - gameState.lastUpdate) / 1000;
-            gameState.lastUpdate = now;
-            
-            if (!gameState.gameStarted || gameState.gameOver) return;
-            
-            // Update time
-            gameState.timeLeft -= deltaTime;
-            if (gameState.timeLeft <= 0) {
-                endGame(false);
-                return;
+                ctx.arc(this.x + this.width/2, this.y + this.height/2, this.width/2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Add shine effect
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.beginPath();
+                ctx.arc(this.x + this.width/2 - 8, this.y + this.height/2 - 8, 8, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw player name
+                ctx.fillStyle = '#1a2a6c';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('ASH', this.x + this.width/2, this.y + this.height/2 + 5);
             }
             
-            // Player resources
-            gameState.player.planets.forEach(p => {
-                gameState.player.resources += p.production * deltaTime;
-            });
-            
-            // AI resources
-            gameState.aiPlayers.forEach(ai => {
-                ai.planets.forEach(p => {
-                    ai.resources += p.production * deltaTime;
-                });
-            });
-            
-            // Update UI
-            updateUI();
-        }
-
-        // Update UI
-        function updateUI() {
-            planetCountEl.textContent = gameState.player.planets.length;
-            fleetSizeEl.textContent = gameState.player.fleet;
-            resourcesEl.textContent = Math.floor(gameState.player.resources);
-            
-            // Format time
-            const min = Math.floor(gameState.timeLeft / 60);
-            const sec = Math.floor(gameState.timeLeft % 60);
-            timeLeftEl.textContent = `${min}:${sec < 10 ? '0' : ''}${sec}`;
-        }
-
-        // End game
-        function endGame(victory) {
-            gameState.gameOver = true;
-            const message = document.createElement('div');
-            message.className = 'message';
-            message.innerHTML = `
-                <h2>${victory ? 'GALACTIC DOMINATION!' : 'DEFEATED!'}</h2>
-                <p>${victory ? 'You conquered the galaxy!' : 'Resistance overthrew you!'}</p>
-                <p>Controlled ${gameState.player.controlPercentage}% of planets</p>
-                <input type="text" class="name-input" id="playerName" placeholder="Your villain name">
-                <button class="btn" id="saveScore">Save Score & Restart</button>
-            `;
-            document.querySelector('.game-board').appendChild(message);
-            document.getElementById('saveScore').addEventListener('click', () => {
-                const name = document.getElementById('playerName').value || "Unknown Villain";
-                saveToLeaderboard(name, gameState.player.controlPercentage);
-                setTimeout(() => location.reload(), 1000);
-            });
-        }
-
-        // Planet selection
-        function handlePlanetSelection(x, y) {
-            gameState.selectedPlanet = null;
-            for (const planet of gameState.planets) {
-                const dx = planet.x - x;
-                const dy = planet.y - y;
-                if (Math.sqrt(dx*dx + dy*dy) <= planet.size) {
-                    gameState.selectedPlanet = planet;
-                    break;
+            update() {
+                // Apply gravity
+                playerVelocity += gravity * 0.5;
+                this.y += playerVelocity;
+                
+                // Boundary check
+                if (this.y <= 0) {
+                    this.y = 0;
+                    playerVelocity = 0;
+                }
+                
+                if (this.y + this.height >= canvas.height) {
+                    this.y = canvas.height - this.height;
+                    playerVelocity = 0;
                 }
             }
         }
-
-        // Game loop
+        
+        // Obstacle class
+        class Obstacle {
+            constructor(type) {
+                this.width = 30;
+                this.height = Math.random() * 100 + 50;
+                this.x = canvas.width;
+                
+                if (type === 'top') {
+                    this.y = 0;
+                } else { // bottom
+                    this.y = canvas.height - this.height;
+                }
+                
+                this.type = type;
+                this.passed = false;
+            }
+            
+            draw() {
+                ctx.fillStyle = '#ff3333';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                
+                // Add gradient effect
+                const gradient = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
+                gradient.addColorStop(0, '#ff0000');
+                gradient.addColorStop(1, '#990000');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                
+                // Add border
+                ctx.strokeStyle = '#ff6666';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(this.x, this.y, this.width, this.height);
+            }
+            
+            update() {
+                this.x -= obstacleSpeed;
+                
+                // Score if obstacle passed player without collision
+                if (!this.passed && this.x + this.width < playerX) {
+                    score += 1;
+                    scoreDisplay.textContent = score;
+                    this.passed = true;
+                    
+                    // Level up every 10 points
+                    if (score % 10 === 0) {
+                        levelUp();
+                    }
+                }
+            }
+            
+            collide(player) {
+                return (
+                    player.x < this.x + this.width &&
+                    player.x + player.width > this.x &&
+                    player.y < this.y + this.height &&
+                    player.y + player.height > this.y
+                );
+            }
+        }
+        
+        function levelUp() {
+            level++;
+            levelDisplay.textContent = level;
+            
+            // Increase difficulty
+            obstacleSpeed += 0.5;
+            obstacleSpawnRate = Math.max(20, obstacleSpawnRate - 5);
+            
+            // Create visual effect for level up
+            createParticles(canvas.width/2, canvas.height/2, 30, '#4db8ff');
+        }
+        
+        function createParticles(x, y, count, color) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    particle.style.backgroundColor = color;
+                    
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 5 + 2;
+                    const vx = Math.cos(angle) * speed;
+                    const vy = Math.sin(angle) * speed;
+                    
+                    document.querySelector('.game-screen').appendChild(particle);
+                    
+                    let opacity = 1;
+                    const particleInterval = setInterval(() => {
+                        x += vx;
+                        y += vy;
+                        opacity -= 0.02;
+                        
+                        particle.style.left = `${x}px`;
+                        particle.style.top = `${y}px`;
+                        particle.style.opacity = opacity;
+                        
+                        if (opacity <= 0) {
+                            clearInterval(particleInterval);
+                            particle.remove();
+                        }
+                    }, 30);
+                }, i * 30);
+            }
+        }
+        
+        function flipGravity() {
+            gravity = -gravity;
+            createParticles(playerX + playerWidth/2, playerY + playerHeight/2, 10, '#ffcc00');
+        }
+        
+        function spawnObstacle() {
+            // Choose top or bottom obstacle
+            const type = Math.random() > 0.5 ? 'top' : 'bottom';
+            obstacles.push(new Obstacle(type));
+        }
+        
+        function checkCollisions(player) {
+            for (let obstacle of obstacles) {
+                if (obstacle.collide(player)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
         function gameLoop() {
-            updateGameState();
+            // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw stars
-            ctx.fillStyle = "#ffffff";
-            for (let i = 0; i < 200; i++) {
-                const x = Math.random() * canvas.width;
-                const y = Math.random() * canvas.height;
-                const size = Math.random() * 1.5;
+            // Draw background grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            
+            // Vertical lines
+            for (let x = 0; x < canvas.width; x += 40) {
                 ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
             }
             
-            // Draw planets
-            gameState.planets.forEach(drawPlanet);
-            drawUI();
-            
-            if (!gameState.gameOver) requestAnimationFrame(gameLoop);
-        }
-
-        // Draw stars background
-        function drawStars() {
-            ctx.fillStyle = "#ffffff";
-            for (let i = 0; i < 200; i++) {
-                const x = Math.random() * canvas.width;
-                const y = Math.random() * canvas.height;
-                const size = Math.random() * 1.5;
+            // Horizontal lines
+            for (let y = 0; y < canvas.height; y += 40) {
                 ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
             }
+            
+            // Create player
+            const player = new Player();
+            player.update();
+            player.draw();
+            
+            // Spawn obstacles
+            if (frameCount % obstacleSpawnRate === 0) {
+                spawnObstacle();
+            }
+            
+            // Update and draw obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].update();
+                obstacles[i].draw();
+                
+                // Remove obstacles that are off screen
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+            
+            // Check for collisions
+            if (checkCollisions(player)) {
+                gameOver();
+                return;
+            }
+            
+            frameCount++;
+            animationId = requestAnimationFrame(gameLoop);
         }
-
+        
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            
+            // Update high score
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('ashGravityDodgeHighScore', highScore);
+                highScoreDisplay.textContent = highScore;
+            }
+            
+            // Show game over screen
+            finalScoreDisplay.textContent = score;
+            finalHighScoreDisplay.textContent = highScore;
+            gameOverScreen.classList.remove('hidden');
+            
+            // Create explosion effect
+            createParticles(playerX + playerWidth/2, playerY + playerHeight/2, 50, '#ff3333');
+        }
+        
         // Event listeners
         startBtn.addEventListener('click', initGame);
-        singlePlayerBtn.addEventListener('click', () => {
-            gameState.gameMode = "singlePlayer";
-            singlePlayerBtn.classList.add('active');
-            multiPlayerBtn.classList.remove('active');
-        });
-        multiPlayerBtn.addEventListener('click', () => {
-            gameState.gameMode = "multiPlayer";
-            multiPlayerBtn.classList.add('active');
-            singlePlayerBtn.classList.remove('active');
-        });
-        buildFleetBtn.addEventListener('click', () => {
-            if (gameState.player.resources >= 50) {
-                gameState.player.fleet += 50;
-                gameState.player.resources -= 50;
-                updateUI();
+        restartBtn.addEventListener('click', initGame);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                
+                if (!gameRunning && !startScreen.classList.contains('hidden')) {
+                    initGame();
+                } else if (gameRunning) {
+                    flipGravity();
+                } else if (!gameRunning && !gameOverScreen.classList.contains('hidden')) {
+                    initGame();
+                }
             }
         });
-        upgradePlanetBtn.addEventListener('click', () => {
-            if (gameState.selectedPlanet && gameState.player.resources >= 100) {
-                gameState.selectedPlanet.level++;
-                gameState.selectedPlanet.production += 5;
-                gameState.player.resources -= 100;
-                updateUI();
+        
+        // Touch support for mobile
+        canvas.addEventListener('click', () => {
+            if (gameRunning) {
+                flipGravity();
             }
         });
-        launchAttackBtn.addEventListener('click', () => {
-            if (gameState.selectedPlanet && gameState.player.fleet > 50) {
-                gameState.player.fleet -= 50;
-                updateUI();
-            }
-        });
-        canvas.addEventListener('click', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            handlePlanetSelection(e.clientX - rect.left, e.clientY - rect.top);
-        });
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            handlePlanetSelection(touch.clientX - rect.left, touch.clientY - rect.top);
-        });
-
+        
         // Initialize
         window.addEventListener('load', () => {
-            initCanvas();
-            window.addEventListener('resize', initCanvas);
-            initLeaderboard();
+            highScoreDisplay.textContent = highScore;
         });
     </script>
 </body>
