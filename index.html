@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinoTrail 3D | Ash Systems</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #ff6b00;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            color: #ff6b00;
+            text-shadow: 0 0 10px rgba(255, 107, 0, 0.7);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #ff6b00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .game-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .score-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid #ff6b00;
+        }
+
+        .auth-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid #ff6b00;
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            pointer-events: all;
+            z-index: 10;
+        }
+
+        .auth-panel h2 {
+            color: #ff6b00;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            background: #ff6b00;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            pointer-events: all;
+            margin: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: #ff8c42;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .game-over {
+            display: none;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .player-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid #ff6b00;
+        }
+
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .leaderboard {
+            background: rgba(0, 0, 0, 0.7);
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 300px;
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #ff6b00;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .leaderboard h3 {
+            color: #ff6b00;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #444;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            font-weight: bold;
+            color: #ff6b00;
+            min-width: 30px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .leaderboard-score {
+            font-weight: bold;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        .instructions {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ff6b00;
+            text-align: center;
+            width: 250px;
+        }
+
+        .instructions h3 {
+            color: #ff6b00;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .key {
+            background: #333;
+            border: 2px solid #ff6b00;
+            border-radius: 5px;
+            padding: 5px 10px;
+            min-width: 50px;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .leaderboard, .instructions {
+                position: static;
+                width: 100%;
+                margin: 10px;
+            }
+            
+            .game-container {
+                flex-direction: column;
+            }
+            
+            .auth-panel {
+                width: 95%;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">A</div>
+            <h1>DINOTRAIL 3D</h1>
+        </div>
+        <div class="game-info">
+            <span>ASH SYSTEMS PRESENTS</span>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div class="ui-overlay">
+            <div class="score-display">
+                SCORE: <span id="score">0</span>
+            </div>
+            
+            <div id="authPanel" class="auth-panel">
+                <h2>GOOGLE SIGN-IN REQUIRED</h2>
+                <p>Sign in to save your progress and compete on the leaderboard</p>
+                <div class="player-info">
+                    <div class="player-avatar">
+                        <img id="playerAvatar" src="" alt="">
+                    </div>
+                    <div>
+                        <div id="playerName">Guest Player</div>
+                        <div id="playerEmail"></div>
+                    </div>
+                </div>
+                <button id="signInButton" class="btn">SIGN IN WITH GOOGLE</button>
+                <button id="playAsGuest" class="btn">PLAY AS GUEST</button>
+                <div class="privacy-options">
+                    <label>
+                        <input type="checkbox" id="anonymousPlay">
+                        Play anonymously
+                    </label>
+                </div>
+            </div>
+            
+            <div id="gameOverPanel" class="auth-panel game-over">
+                <h2>GAME OVER!</h2>
+                <p>Your score: <span id="finalScore">0</span></p>
+                <div class="player-info">
+                    <div class="player-avatar">
+                        <img id="gameOverAvatar" src="" alt="">
+                    </div>
+                    <div>
+                        <div id="gameOverName">Player</div>
+                    </div>
+                </div>
+                <button id="restartButton" class="btn">PLAY AGAIN</button>
+                <button id="shareButton" class="btn">SHARE SCORE</button>
+            </div>
+            
+            <div class="leaderboard">
+                <h3>GLOBAL LEADERBOARD</h3>
+                <div id="leaderboardList">
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">1.</span>
+                        <span class="leaderboard-name">Loading...</span>
+                        <span class="leaderboard-score">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h3>CONTROLS</h3>
+                <div class="controls">
+                    <div>
+                        <div class="key">SPACE</div>
+                        <div>JUMP</div>
+                    </div>
+                    <div>
+                        <div class="key">DOWN</div>
+                        <div>DUCK</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration - YOUR NEW CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyANL2gTGmThZIzPvzn_Rmp22cCUgX1bsHw",
+            authDomain: "dyno-run-85350.firebaseapp.com",
+            projectId: "dyno-run-85350",
+            storageBucket: "dyno-run-85350.firebasestorage.app",
+            messagingSenderId: "254970571936",
+            appId: "1:254970571936:web:9385b2126a7006a1de6dc5",
+            measurementId: "G-P1FT28815B"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Game variables
+        let scene, camera, renderer, dino, obstacles = [];
+        let groundMeshes = [];
+        let gameSpeed = 6;
+        let score = 0;
+        let gameActive = false;
+        let currentUser = null;
+        let playerName = "Guest";
+        let playerAvatar = "";
+        let isAnonymous = false;
+        let jumpVelocity = 0;
+        let gravity = 0.5;
+        let dinoY = 1;
+        let lastObstacleTime = 0;
+        let obstacleInterval = 1500;
+        let distance = 0;
+        let nightMode = false;
+
+        // Initialize Three.js
+        function init() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf7f7f7);
+            scene.fog = new THREE.Fog(0xf7f7f7, 100, 200);
+
+            // Create camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 15);
+            camera.lookAt(0, 3, 0);
+
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('gameCanvas'),
+                antialias: true,
+                alpha: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 20, 15);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            // Create ground
+            createGround();
+
+            // Create dinosaur
+            createDino();
+
+            // Add Ash Systems branding
+            addBrandingElements();
+
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            document.addEventListener('keydown', handleKeyDown);
+            document.getElementById('signInButton').addEventListener('click', signInWithGoogle);
+            document.getElementById('playAsGuest').addEventListener('click', playAsGuest);
+            document.getElementById('restartButton').addEventListener('click', restartGame);
+            document.getElementById('shareButton').addEventListener('click', shareScore);
+            document.getElementById('anonymousPlay').addEventListener('change', toggleAnonymous);
+
+            // Touch controls for mobile
+            setupTouchControls();
+
+            // Start animation loop
+            animate();
+        }
+
+        function createGround() {
+            const groundSegmentWidth = 10;
+            const segmentCount = 20;
+            
+            for (let i = 0; i < segmentCount; i++) {
+                const groundGeometry = new THREE.PlaneGeometry(groundSegmentWidth, 10);
+                const groundMaterial = new THREE.MeshStandardMaterial({ 
+                    color: 0x4CAF50,
+                    roughness: 0.8,
+                    metalness: 0.2
+                });
+                
+                const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+                groundMesh.rotation.x = -Math.PI / 2;
+                groundMesh.position.set(i * groundSegmentWidth - (segmentCount * groundSegmentWidth)/2, 0, 0);
+                groundMesh.receiveShadow = true;
+                scene.add(groundMesh);
+                groundMeshes.push(groundMesh);
+            }
+        }
+
+        function createDino() {
+            // Body
+            const bodyGeometry = new THREE.BoxGeometry(0.8, 1.2, 0.5);
+            const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.set(0, dinoY + 0.6, 0);
+            body.castShadow = true;
+            
+            // Head
+            const headGeometry = new THREE.BoxGeometry(0.6, 0.6, 0.6);
+            const headMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.set(0.4, dinoY + 1.2, 0);
+            head.castShadow = true;
+            
+            // Legs
+            const legGeometry = new THREE.BoxGeometry(0.2, 0.6, 0.2);
+            const legMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+            
+            const leg1 = new THREE.Mesh(legGeometry, legMaterial);
+            leg1.position.set(-0.3, dinoY + 0.3, 0.2);
+            leg1.castShadow = true;
+            
+            const leg2 = new THREE.Mesh(legGeometry, legMaterial);
+            leg2.position.set(0.1, dinoY + 0.3, 0.2);
+            leg2.castShadow = true;
+            
+            const leg3 = new THREE.Mesh(legGeometry, legMaterial);
+            leg3.position.set(-0.3, dinoY + 0.3, -0.2);
+            leg3.castShadow = true;
+            
+            const leg4 = new THREE.Mesh(legGeometry, legMaterial);
+            leg4.position.set(0.1, dinoY + 0.3, -0.2);
+            leg4.castShadow = true;
+            
+            dino = new THREE.Group();
+            dino.add(body);
+            dino.add(head);
+            dino.add(leg1);
+            dino.add(leg2);
+            dino.add(leg3);
+            dino.add(leg4);
+            dino.position.z = 0;
+            
+            scene.add(dino);
+        }
+
+        function animateDino() {
+            if (!gameActive) return;
+            
+            // Animate legs for running effect
+            const time = Date.now() * 0.005;
+            const legSpeed = gameSpeed * 5;
+            
+            dino.children[2].rotation.x = Math.sin(time * legSpeed) * 0.5;
+            dino.children[3].rotation.x = Math.sin(time * legSpeed + Math.PI) * 0.5;
+            dino.children[4].rotation.x = Math.sin(time * legSpeed) * 0.5;
+            dino.children[5].rotation.x = Math.sin(time * legSpeed + Math.PI) * 0.5;
+            
+            // Handle jumping physics
+            if (dino.position.y > dinoY) {
+                dino.position.y += jumpVelocity;
+                jumpVelocity -= gravity;
+                
+                if (dino.position.y <= dinoY) {
+                    dino.position.y = dinoY;
+                }
+            }
+        }
+
+        function addBrandingElements() {
+            // Ash Systems billboard
+            const billboardGeometry = new THREE.BoxGeometry(4, 3, 0.2);
+            const billboardMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x333333,
+                emissive: 0xff6b00
+            });
+            
+            const billboard = new THREE.Mesh(billboardGeometry, billboardMaterial);
+            billboard.position.set(30, 4, 0);
+            scene.add(billboard);
+            
+            // Ash Systems text on billboard
+            const textCanvas = document.createElement('canvas');
+            textCanvas.width = 256;
+            textCanvas.height = 128;
+            const context = textCanvas.getContext('2d');
+            context.fillStyle = '#ff6b00';
+            context.font = 'bold 40px "Press Start 2P"';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText('ASH SYSTEMS', textCanvas.width/2, textCanvas.height/2);
+            
+            const texture = new THREE.CanvasTexture(textCanvas);
+            const textMaterial = new THREE.MeshBasicMaterial({ 
+                map: texture,
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const textGeometry = new THREE.PlaneGeometry(3.5, 1.5);
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+            textMesh.position.set(30, 4, 0.11);
+            scene.add(textMesh);
+        }
+
+        function createObstacle(type, position) {
+            let obstacle;
+            
+            switch(type) {
+                case 0: // Small cactus
+                    const cactusGeometry = new THREE.ConeGeometry(0.4, 1.8, 6);
+                    const cactusMaterial = new THREE.MeshStandardMaterial({ color: 0x2E8B57 });
+                    obstacle = new THREE.Mesh(cactusGeometry, cactusMaterial);
+                    obstacle.position.y = dinoY + 0.9;
+                    break;
+                    
+                case 1: // Large cactus
+                    const largeCactusGeometry = new THREE.ConeGeometry(0.6, 2.5, 6);
+                    const largeCactusMaterial = new THREE.MeshStandardMaterial({ color: 0x2E8B57 });
+                    obstacle = new THREE.Mesh(largeCactusGeometry, largeCactusMaterial);
+                    obstacle.position.y = dinoY + 1.25;
+                    break;
+                    
+                case 2: // Pterodactyl
+                    const pteroGeometry = new THREE.BoxGeometry(1.2, 0.4, 0.4);
+                    const pteroMaterial = new THREE.MeshStandardMaterial({ color: 0x8B008B });
+                    obstacle = new THREE.Mesh(pteroGeometry, pteroMaterial);
+                    obstacle.position.y = dinoY + (Math.random() > 0.5 ? 2.5 : 3.5);
+                    break;
+            }
+            
+            obstacle.position.x = position;
+            obstacle.position.z = 0;
+            obstacle.castShadow = true;
+            obstacle.userData = { type: type };
+            
+            scene.add(obstacle);
+            obstacles.push(obstacle);
+            return obstacle;
+        }
+
+        function updateObstacles() {
+            const currentTime = Date.now();
+            
+            // Add new obstacles
+            if (currentTime - lastObstacleTime > obstacleInterval && obstacles.length < 5) {
+                const obstacleType = Math.floor(Math.random() * 3);
+                createObstacle(obstacleType, 30);
+                lastObstacleTime = currentTime;
+                
+                // Decrease interval to increase difficulty
+                obstacleInterval = Math.max(500, obstacleInterval * 0.98);
+            }
+            
+            // Move obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obstacle = obstacles[i];
+                obstacle.position.x -= gameSpeed * 0.016;
+                
+                // Remove off-screen obstacles
+                if (obstacle.position.x < -20) {
+                    scene.remove(obstacle);
+                    obstacles.splice(i, 1);
+                }
+            }
+        }
+
+        function updateGround() {
+            const segmentSpeed = gameSpeed * 0.016;
+            
+            for (const groundMesh of groundMeshes) {
+                groundMesh.position.x -= segmentSpeed;
+                
+                // Reset segment position when it moves off-screen
+                if (groundMesh.position.x < -50) {
+                    groundMesh.position.x += 100;
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (!gameActive) return;
+            
+            // Update game elements
+            distance += gameSpeed * 0.01;
+            animateDino();
+            updateGround();
+            updateObstacles();
+            
+            // Check collisions
+            checkCollisions();
+            
+            // Increase difficulty
+            gameSpeed += 0.0005;
+            
+            // Update score
+            score = Math.floor(distance * 10);
+            document.getElementById('score').textContent = score;
+            
+            renderer.render(scene, camera);
+        }
+
+        function checkCollisions() {
+            const dinoBox = new THREE.Box3().setFromObject(dino);
+            
+            for (const obstacle of obstacles) {
+                const obstacleBox = new THREE.Box3().setFromObject(obstacle);
+                
+                if (dinoBox.intersectsBox(obstacleBox)) {
+                    endGame();
+                    return;
+                }
+            }
+        }
+
+        function handleKeyDown(event) {
+            if (!gameActive) return;
+            
+            switch(event.keyCode) {
+                case 32: // Spacebar (jump)
+                case 38: // Up arrow (jump)
+                    if (dino.position.y <= dinoY) {
+                        jumpVelocity = 0.5;
+                        dino.position.y += 0.1;
+                    }
+                    break;
+                    
+                case 40: // Down arrow (duck)
+                    dino.scale.y = 0.6;
+                    dino.position.y = dinoY + 0.3;
+                    setTimeout(() => {
+                        dino.scale.y = 1;
+                        dino.position.y = dinoY;
+                    }, 500);
+                    break;
+            }
+        }
+
+        function setupTouchControls() {
+            const gameContainer = document.querySelector('.game-container');
+            
+            // Jump on tap
+            gameContainer.addEventListener('click', () => {
+                if (!gameActive) return;
+                
+                if (dino.position.y <= dinoY) {
+                    jumpVelocity = 0.5;
+                    dino.position.y += 0.1;
+                }
+            });
+            
+            // Duck on swipe down
+            let touchStartY = 0;
+            
+            gameContainer.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+            });
+            
+            gameContainer.addEventListener('touchmove', (e) => {
+                if (!gameActive) return;
+                
+                const touchY = e.touches[0].clientY;
+                const deltaY = touchY - touchStartY;
+                
+                if (deltaY > 50 && dino.position.y <= dinoY) {
+                    dino.scale.y = 0.6;
+                    dino.position.y = dinoY + 0.3;
+                }
+            });
+            
+            gameContainer.addEventListener('touchend', () => {
+                dino.scale.y = 1;
+                dino.position.y = dinoY;
+            });
+        }
+
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    currentUser = result.user;
+                    updateUserInfo();
+                    startGame();
+                })
+                .catch((error) => {
+                    console.error("Authentication error:", error);
+                });
+        }
+
+        function playAsGuest() {
+            isAnonymous = document.getElementById('anonymousPlay').checked;
+            startGame();
+        }
+
+        function toggleAnonymous() {
+            isAnonymous = document.getElementById('anonymousPlay').checked;
+        }
+
+        function updateUserInfo() {
+            if (currentUser) {
+                playerName = currentUser.displayName || "Player";
+                playerAvatar = currentUser.photoURL || "";
+                
+                document.getElementById('playerName').textContent = playerName;
+                document.getElementById('playerEmail').textContent = currentUser.email || "";
+                
+                const avatarImg = document.getElementById('playerAvatar');
+                if (playerAvatar) {
+                    avatarImg.src = playerAvatar;
+                } else {
+                    avatarImg.src = "";
+                }
+            }
+        }
+
+        function startGame() {
+            document.getElementById('authPanel').classList.add('hidden');
+            gameActive = true;
+            score = 0;
+            distance = 0;
+            gameSpeed = 6;
+            lastObstacleTime = Date.now();
+            obstacleInterval = 1500;
+            
+            // Reset dino position
+            dino.position.y = dinoY;
+            dino.scale.y = 1;
+            
+            // Clear existing obstacles
+            obstacles.forEach(obstacle => scene.remove(obstacle));
+            obstacles = [];
+            
+            // Update leaderboard
+            updateLeaderboard();
+        }
+
+        function endGame() {
+            gameActive = false;
+            
+            // Update game over panel
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('gameOverName').textContent = isAnonymous ? "Anonymous Player" : playerName;
+            
+            const gameOverAvatar = document.getElementById('gameOverAvatar');
+            if (!isAnonymous && playerAvatar) {
+                gameOverAvatar.src = playerAvatar;
+            } else {
+                gameOverAvatar.src = "";
+            }
+            
+            // Show game over panel
+            document.getElementById('gameOverPanel').classList.remove('game-over');
+            
+            // Save score if authenticated
+            if (currentUser && !isAnonymous) {
+                saveScore();
+            }
+        }
+
+        function saveScore() {
+            db.collection("scores").add({
+                playerId: currentUser.uid,
+                playerName: playerName,
+                score: score,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                anonymous: isAnonymous,
+                distance: distance
+            })
+            .then(() => {
+                console.log("Score saved successfully");
+                updateLeaderboard();
+            })
+            .catch((error) => {
+                console.error("Error saving score: ", error);
+            });
+        }
+
+        function updateLeaderboard() {
+            db.collection("scores")
+                .orderBy("score", "desc")
+                .limit(10)
+                .get()
+                .then((querySnapshot) => {
+                    const leaderboardList = document.getElementById('leaderboardList');
+                    leaderboardList.innerHTML = '';
+                    
+                    let rank = 1;
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const item = document.createElement('div');
+                        item.className = 'leaderboard-item';
+                        item.innerHTML = `
+                            <span class="leaderboard-rank">${rank}.</span>
+                            <span class="leaderboard-name">${data.playerName}</span>
+                            <span class="leaderboard-score">${data.score}</span>
+                        `;
+                        leaderboardList.appendChild(item);
+                        rank++;
+                    });
+                })
+                .catch((error) => {
+                    console.log("Error getting leaderboard:", error);
+                });
+        }
+
+        function restartGame() {
+            document.getElementById('gameOverPanel').classList.add('game-over');
+            startGame();
+        }
+
+        function shareScore() {
+            const shareText = `I scored ${score} points in DinoTrail 3D! Can you beat me?`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'DinoTrail 3D',
+                    text: shareText,
+                    url: window.location.href
+                })
+                .catch(console.error);
+            } else {
+                alert(shareText + "\n\nShare this URL: " + window.location.href);
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Initialize game when page loads
+        window.onload = () => {
+            init();
+            
+            // Check if user is already signed in
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    updateUserInfo();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
