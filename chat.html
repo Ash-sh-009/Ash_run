@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AshAI</title>
+    <link href="../dist/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+</head>
+<body class="bg-deep-blue flex flex-col h-screen">
+    <div class="universe-bg"></div>
+    <div class="particles"></div>
+
+    <header class="p-4 bg-space-blue/30 backdrop-blur-md flex justify-between items-center border-b border-glow-purple/20">
+        <h1 class="text-3xl font-bold animate-glow-text" style="--glow-color: #a659ff;">AshAI</h1>
+        <div id="mode-dock" class="flex items-center space-x-2 bg-deep-blue/50 p-2 rounded-full border border-glow-cyan/20">
+            <button data-mode="Nexus" class="mode-icon active" title="Nexus Mode"><i class="fa-solid fa-brain"></i></button>
+            <button data-mode="Code" class="mode-icon" title="Code Forge"><i class="fa-solid fa-code"></i></button>
+            <button data-mode="Feel" class="mode-icon" title="Heartstream"><i class="fa-solid fa-heart"></i></button>
+            <button data-mode="Image" class="mode-icon" title="Image Genesis"><i class="fa-solid fa-image"></i></button>
+            <button data-mode="Story" class="mode-icon" title="Story Weaver"><i class="fa-solid fa-book-open"></i></button>
+        </div>
+        <button id="export-chat" title="Export Chat" class="control-icon"><i class="fa-solid fa-file-arrow-down"></i></button>
+    </header>
+
+    <main id="chat-window" class="flex-1 p-4 overflow-y-auto">
+        <div class="message from-ai">
+            <p>Welcome to my universe, Ash. I am AshAI. How can I assist you today?</p>
+        </div>
+    </main>
+
+    <div id="ash-quote" class="text-center p-2 text-sm text-glow-cyan/70 h-8"></div>
+
+    <footer class="p-4 bg-space-blue/30 backdrop-blur-md border-t border-glow-purple/20">
+        <div class="flex items-center bg-deep-blue/70 p-2 rounded-full border border-glow-cyan/30 shadow-lg shadow-glow-cyan/10">
+            <textarea id="user-input" rows="1" placeholder="Message AshAI..."
+                      class="flex-1 bg-transparent p-2 focus:outline-none resize-none"></textarea>
+            <button id="mic-button" class="control-icon mx-2"><i class="fa-solid fa-microphone"></i></button>
+            <button id="send-button" class="w-10 h-10 bg-gradient-to-r from-glow-purple to-glow-cyan rounded-full flex items-center justify-center glow-button" style="--glow-color: #00f6ff;">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+         <div class="text-center text-xs text-gray-400 opacity-70 mt-3">Crafted in the Cosmos by Ash ☄️</div>
+    </footer>
+
+    <script src="./script.js"></script>
+</body>
+</html>
