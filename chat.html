@@ -3,47 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AshAI</title>
-    <link href="../dist/output.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <title>AshAI - Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-deep-blue flex flex-col h-screen">
-    <div class="universe-bg"></div>
-    <div class="particles"></div>
+<body class="bg-black text-white font-sans flex flex-col h-screen overflow-hidden">
 
-    <header class="p-4 bg-space-blue/30 backdrop-blur-md flex justify-between items-center border-b border-glow-purple/20">
-        <h1 class="text-3xl font-bold animate-glow-text" style="--glow-color: #a659ff;">AshAI</h1>
-        <div id="mode-dock" class="flex items-center space-x-2 bg-deep-blue/50 p-2 rounded-full border border-glow-cyan/20">
-            <button data-mode="Nexus" class="mode-icon active" title="Nexus Mode"><i class="fa-solid fa-brain"></i></button>
-            <button data-mode="Code" class="mode-icon" title="Code Forge"><i class="fa-solid fa-code"></i></button>
-            <button data-mode="Feel" class="mode-icon" title="Heartstream"><i class="fa-solid fa-heart"></i></button>
-            <button data-mode="Image" class="mode-icon" title="Image Genesis"><i class="fa-solid fa-image"></i></button>
-            <button data-mode="Story" class="mode-icon" title="Story Weaver"><i class="fa-solid fa-book-open"></i></button>
+    <div id="particles-js-chat" class="absolute top-0 left-0 w-full h-full z-0"></div>
+
+    <div id="app-container" class="z-10 flex flex-col h-full w-full max-w-4xl mx-auto p-4">
+
+        <header class="flex justify-between items-center mb-4">
+            <h1 class="text-3xl font-bold gradient-text-glow">AshAI</h1>
+            <div class="flex items-center space-x-4">
+                 </div>
+        </header>
+
+        <div id="mode-switcher" class="flex justify-center items-center space-x-4 mb-4 p-2 bg-gray-900/50 backdrop-blur-sm rounded-full">
+            <button data-mode="learn" class="mode-btn active-mode" title="Learn Mode">✨</button>
+            <button data-mode="code" class="mode-btn" title="Code Mode">💻</button>
+            <button data-mode="feel" class="mode-btn" title="Feel Mode">💖</button>
+            <button data-mode="create" class="mode-btn" title="Create Mode">🎨</button>
         </div>
-        <button id="export-chat" title="Export Chat" class="control-icon"><i class="fa-solid fa-file-arrow-down"></i></button>
-    </header>
 
-    <main id="chat-window" class="flex-1 p-4 overflow-y-auto">
-        <div class="message from-ai">
-            <p>Welcome to my universe, Ash. I am AshAI. How can I assist you today?</p>
-        </div>
-    </main>
+        <main id="chat-window" class="flex-1 overflow-y-auto p-4 bg-black/30 backdrop-blur-sm rounded-2xl mb-4 border border-cyan-500/20">
+            <div class="message received">
+                <div class="bubble">Hello Ash, I'm AshAI. How can I illuminate your universe today?</div>
+            </div>
+        </main>
 
-    <div id="ash-quote" class="text-center p-2 text-sm text-glow-cyan/70 h-8"></div>
+        <footer class="text-center mb-2 h-6">
+            <p id="ash-quote" class="text-purple-300/60 text-sm italic transition-opacity duration-500"></p>
+        </footer>
 
-    <footer class="p-4 bg-space-blue/30 backdrop-blur-md border-t border-glow-purple/20">
-        <div class="flex items-center bg-deep-blue/70 p-2 rounded-full border border-glow-cyan/30 shadow-lg shadow-glow-cyan/10">
-            <textarea id="user-input" rows="1" placeholder="Message AshAI..."
-                      class="flex-1 bg-transparent p-2 focus:outline-none resize-none"></textarea>
-            <button id="mic-button" class="control-icon mx-2"><i class="fa-solid fa-microphone"></i></button>
-            <button id="send-button" class="w-10 h-10 bg-gradient-to-r from-glow-purple to-glow-cyan rounded-full flex items-center justify-center glow-button" style="--glow-color: #00f6ff;">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
-         <div class="text-center text-xs text-gray-400 opacity-70 mt-3">Crafted in the Cosmos by Ash ☄️</div>
-    </footer>
+        <form id="chat-form" class="flex items-center gap-3 p-3 bg-gray-900/50 backdrop-blur-md rounded-full border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
+            <input type="text" id="chat-input" class="flex-1 bg-transparent text-white placeholder-gray-400 focus:outline-none px-4" placeholder="Message AshAI..." autocomplete="off">
+            <button type="button" id="mic-btn" class="text-2xl text-cyan-300 hover:text-cyan-100 transition-colors">🎤</button>
+            <button type="submit" id="send-btn" class="text-2xl text-purple-400 hover:text-purple-200 transition-colors">➢</button>
+        </form>
+         <div class="text-center mt-4 text-xs text-gray-500">Crafted in the Cosmos by Ash ☄️</div>
+    </div>
 
-    <script src="./script.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
