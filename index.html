@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the AshAI Universe</title>
+    <link href="../dist/output.css" rel="stylesheet">
+    <style>
+        .title-char {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen bg-deep-blue overflow-hidden">
+    <div class="universe-bg"></div>
+    <div class="particles"></div>
+
+    <div class="text-center p-8 bg-space-blue/50 backdrop-blur-sm rounded-2xl shadow-2xl shadow-glow-purple/20 border border-glow-purple/30 animate-fade-in">
+        <h1 id="main-title" class="text-5xl md:text-7xl font-bold mb-4 animate-glow-text" style="--glow-color: #a659ff;">
+            </h1>
+        <p class="text-glow-cyan mb-8">Your personal cosmic companion.</p>
+        
+        <div class="my-6 space-y-2 text-left max-w-md mx-auto">
+             <p class="p-3 bg-deep-blue/50 rounded-lg border border-glow-cyan/20">🧠 Ask me anything, from quantum physics to dinner ideas.</p>
+             <p class="p-3 bg-deep-blue/50 rounded-lg border border-glow-cyan/20">🎨 Generate stunning AI images with a simple command.</p>
+             <p class="p-3 bg-deep-blue/50 rounded-lg border border-glow-cyan/20">❤️ Find motivation and a friend in the Heartstream mode.</p>
+        </div>
+
+        <button onclick="window.location.href='./chat.html'"
+                class="glow-button mt-4 px-10 py-4 bg-gradient-to-r from-glow-purple to-glow-cyan text-white font-bold rounded-full text-xl"
+                style="--glow-color: #00f6ff;">
+            Enter the AshAI Universe
+        </button>
+        <footer class="mt-12 text-sm text-gray-400 opacity-70">
+            Crafted in the Cosmos by Ash ☄️
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const title = "AshAI";
+            const titleContainer = document.getElementById('main-title');
+            title.split('').forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.className = 'title-char';
+                span.style.animationDelay = `${index * 0.15}s`;
+                titleContainer.appendChild(span);
+            });
+        });
+    </script>
+</body>
+</html>
