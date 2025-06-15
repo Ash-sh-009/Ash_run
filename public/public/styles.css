@@ -1,1 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    @apply bg-deep-blue text-white font-sans;
+    overflow: hidden;
+}
+
+/* Universe Background */
+.universe-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: #0a0f2c;
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+    animation: animateStars 50s linear infinite;
+}
+
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    z-index: -1;
+    background-image: url('https://www.transparenttextures.com/patterns/gplay.png');
+    background-repeat: repeat;
+    animation: animateParticles 30s linear infinite;
+    opacity: 0.3;
+}
+
+/* Glowing Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #1d244f;
+}
+::-webkit-scrollbar-thumb {
+    background: #a659ff;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #00f6ff;
+}
+
+/* Custom Glow Effects */
+.glow-button {
+    @apply transition-all duration-300;
+}
+.glow-button:hover {
+    box-shadow: 0 0 15px var(--glow-color), 0 0 25px var(--glow-color);
+    transform: scale(1.05);
+}
+
+/* Custom Message Styling */
+.message {
+    @apply max-w-lg mb-4 p-4 rounded-xl;
+}
+.from-user {
+    @apply bg-glow-purple/40 ml-auto rounded-br-none;
+}
+.from-ai {
+    @apply bg-space-blue/80 mr-auto rounded-bl-none border border-glow-cyan/20;
+}
+.from-ai p code {
+    @apply bg-deep-blue p-2 rounded-md block whitespace-pre-wrap font-mono text-sm my-2;
+}
+.from-ai .typing-dot {
+    animation: typing-blink 1.2s infinite;
+}
+.from-ai .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.from-ai .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-blink {
+    50% { opacity: 0; }
+}
+
+/* Control & Mode Icons */
+.control-icon, .mode-icon {
+    @apply w-10 h-10 flex items-center justify-center text-xl text-glow-cyan/70 hover:text-glow-cyan hover:bg-glow-cyan/10 rounded-full transition-all duration-300 cursor-pointer border border-transparent;
+}
+
+.mode-icon.active {
+     background-color: #00f6ff33;
+     box-shadow: 0 0 15px #00f6ff;
+     border-color: #00f6ff;
+     color: #00f6ff;
+}
 
